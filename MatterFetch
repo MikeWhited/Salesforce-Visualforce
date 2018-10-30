@@ -8,6 +8,8 @@
     <th>Total Active Data</th>
     <th>Price per GB</th>
     <th>Salesperson</th>
+    <th>Start Date</th>
+    <th>End Date</th>
   </tr>
 
   <apex:repeat value="{!result4}" var="matt">
@@ -16,7 +18,7 @@
         <span>{!matt.name}</span>
       </td>
       <td>
-        <span>{!matt.Contract_Billing_Account__c}</span>
+        <span>{!matt.Billing_Account2__r.Name}</span>
       </td>
       <td>
         <span>{!matt.Contract_EndUser_Account__c}</span>
@@ -31,7 +33,13 @@
         <span>{!matt.Per_GB_Price_per_Month__c}</span>
       </td>
         <td>
-        <span>{!matt.Salesperson__c}</span>
+        <span>{!matt.Salesperson__r.Name}</span>
+      </td>
+       <td>
+        <span>{!matt.First_Data_Set_Date__c}</span>
+      </td>
+        <td>
+        <span>{!matt.DeactivationDate__c}</span>
       </td>
     </tr>
   </apex:repeat>
