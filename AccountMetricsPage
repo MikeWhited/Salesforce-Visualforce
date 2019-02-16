@@ -1,0 +1,223 @@
+<apex:page controller="AccountMetrics" showHeader="false" standardStylesheets="false" sidebar="false" applyHtmlTag="false" applyBodyTag="false" docType="html-5.0">
+<html xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Account Information: Global Search Application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<!-- Import the Design System style sheet -->
+  <apex:slds />
+<!--Trish Static CSS Resource for APEX components-->
+  <apex:stylesheet value="{!$Resource.BeautifyForMike2}" />
+</head>
+<body>
+<!-- REQUIRED SLDS WRAPPER -->
+  <div class="slds-scope">
+<!-- MASTHEAD -->
+  <h1 class="slds-text-heading_label slds-m-bottom_small">Hello {!$User.FirstName}! Thanks for using this app to find the info you need!</h1>
+    <h2 class="slds-text-heading_small slds-m-bottom_small">
+    </h2>
+<!-- / MASTHEAD -->
+<!-- PAGE HEADER -->
+	<div class="slds-page-header">
+<!-- CARD HEADER WITH PADDED BODY -->
+	<article class="slds-card">
+		<div class="slds-card__header slds-grid">
+    		<header class="slds-media slds-media_center slds-has-flexi-truncate">
+      			<div class="slds-media__figure">
+            		<span class="slds-avatar slds-avatar_large">
+              		<img alt="DISCO Circle Square Icon" src="{!$Resource.CircleSquare}" title="Circle Square" />
+            		</span>
+            	</div>
+      			<div class="slds-media__body">
+        			<h2 class="slds-card__header-title">
+            		<span class="slds-text-heading_small">Account Search</span> 
+        			</h2>
+      			</div>
+    		</header>
+  		</div>
+     <!--BODY START -->
+     <!--GRID TO ORGANIZE FILTERS-->
+<apex:form >
+     <div class="slds-grid slds-wrap">
+     <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-6">
+     <span>
+     <!--MATTER FILTER--> 
+          <div class="slds-p-left_medium">
+          	<apex:selectList id="chooseRule" value="{!fromSelect}" size="1">
+                <apex:selectOption itemEscaped="false" itemValue="All Matters" itemLabel="All Matters"/>
+                <apex:selectOption itemEscaped="false" itemValue="Firm is Billing Account" itemLabel="Firm is Billing Account"/>
+                <apex:selectOption itemEscaped="false" itemValue="Firm is End User" itemLabel="Firm is End User"/>
+            </apex:selectList>
+                <apex:actionSupport event="onchange" action="{!searchbox}" reRender="pg1" />
+         </div>
+	 </span>
+          </div>
+      <!--/MATTER FILTER-->
+      <!--OPP FILTER-->
+      <span></span>
+      </div>
+    <br/>
+     <!--SEARCH BAR-->
+        
+  		<div class="slds-card__body slds-card__body_inner">
+        	
+             <c:Typeahead object="Account" searchScope="Name" destinationForSelectedId="AccountId" />	
+             <apex:inputHidden id="AccountId" value="{!searchBoxstring}" />          
+		</div>
+    <!--SEARCH BUTTON -->
+  		<div class="slds-card__body slds-card__body_inner">
+    		
+          		<apex:commandButton action="{!searchbox}" value="Search" styleClass="slds-button slds-button_outline-brand" />
+      		
+  		</div>
+     <!--SEARCH SUMMATION -->
+         <div class="slds-card__body slds-card__body_inner">
+            <h3>This Account is currently hosting hosting {!ActGBSize} GBs across {!NumOfActMatters} Matters.</h3> 
+             <br/>
+            <h3> Current MRR: ${!CurrentMRR} </h3>
+             <br/>
+            <h3> Current Billable Size: ${!BillableGB} </h3>
+             <br/>
+            <h3> Life Time MRR: ${!grandTotal} </h3>
+         </div>
+     <!--/SEARCH SUMMATION -->
+</apex:form>      
+</article>
+<!-- /CARD HEADER WITH PADDED BODY -->
+</div>
+<!-- / PAGE HEADER -->
+<br/>
+     
+<!-- MATTER TABLE -->
+<!-- HEADER CARD WITH ONE ACTION AND DATA TABLE -->
+	<article class="slds-card">
+  		<div class="slds-card__header slds-grid">
+    		<header class="slds-media slds-media_center slds-has-flexi-truncate">
+      		<div class="slds-media__figure">
+        		<span class="slds-icon_container slds-icon-custom-custom90" title="Matters">
+          			<svg class="slds-icon slds-icon_small" aria-hidden="true">
+            			<use xlink:href="/assets/icons/custom-sprite/svg/symbols.svg#custom90"></use>
+          			</svg>
+          				<span class="slds-assistive-text">Matter</span>
+        		</span>
+      		</div>
+      			<div class="slds-media__body">
+        			<h2 class="slds-card__header-title">
+            			<span class="slds-text-heading_small">Matters</span>
+        			</h2>
+      			</div>
+      				<div class="slds-no-flex">
+        			<apex:form > 
+           				<apex:commandButton styleClass="slds-button slds-button--brand slds-not-selected" value="Export To Excel" action="/apex/UsageMatterFetch"/>
+        			</apex:form> 	
+      				</div>
+    		</header>
+  		</div>
+ <!-- / HEADER CARD-->
+ <div>
+  <!-- /Make Collapsible--> 
+        <apex:dataTable value="{!result4}" var="matt" id="pg1" styleClass="slds-table slds-table_bordered slds-is-selected slds-has-flexi-truncate">
+            <apex:column headerValue="Matter Name">                    
+                <apex:outputLink value="/{!matt.Id}" target="_blank">{!matt.name}</apex:outputLink>
+             </apex:column>
+             <apex:column headerValue="Billing Account">
+             	<apex:outputLink value="/{!matt.Billing_Account2__c}" target="_blank">{!matt.Billing_Account2__r.Name}</apex:outputLink>
+             </apex:column> 
+             <apex:column headerValue="End User Account">
+             	<apex:outputLink value="/{!matt.Matter_End_User__c}" target="_blank">{!matt.Contract_EndUser_Account__c}</apex:outputLink>
+             </apex:column>
+             <apex:column headerValue="Is Active?" value="{!matt.Active__c}"/>
+             <apex:column headerValue="Matter Display Name" value="{!matt.Matter_Display_Name__c}"/>
+             <apex:column headerValue="Active GB" value="{!matt.Total_Active_GB__c}"/>
+             <apex:column headerValue="Total GB" value="{!matt.Total_GB__c}"/>
+             <apex:column headerValue="Price per GB" value="{!matt.Current_Price__c}"/>
+             <apex:column headerValue="Started" value="{!matt.First_Data_Set_Date__c}"/>
+             <apex:column headerValue="Deactivated" value="{!matt.DeactivationDate__c}"/>
+             <apex:column headerValue="Salesperson" value="{!matt.Salesperson__c}"/>
+    </apex:dataTable>
+    </div>
+<!-- MATTER FOOTER --> 
+    <footer class="slds-card__footer">
+        <div class="slds-card__body slds-card__body_inner slds-p-top_small">
+  	  		<!--Mike can put stuff here. Text, icons, giphs, whatever-->  
+        </div>
+    </footer>
+    </article>
+ <!-- / MATTER TABLE --> 
+<br/>   
+      
+<!-- CONTRACTS TABLE -->
+<!-- HEADER CARD WITH ONE ACTION AND DATA TABLE -->
+ <article class="slds-card">
+ 	<div class="slds-card__header slds-grid">
+    	<header class="slds-media slds-media_center slds-has-flexi-truncate">
+      		<div class="slds-media__figure">
+        		<span class="slds-icon_container slds-icon-standard-contract" title="Contracts">
+          			<svg class="slds-icon slds-icon_small" aria-hidden="true">
+            			<use xlink:href="/assets/icons/standard-sprite/svg/symbols.svg#contract"></use>
+          			</svg>
+          				<span class="slds-assistive-text">Contract</span>
+        		</span>
+      		</div>
+      			<div class="slds-media__body">
+        			<h2 class="slds-card__header-title">
+            			<span class="slds-text-heading_small">Contracts</span>
+        			</h2>
+      			</div>
+      				<div class="slds-no-flex">
+        				<apex:form >
+           					<apex:commandButton styleClass="slds-button slds-button--brand slds-not-selected" value="Export To Excel" action="/apex/ContractFetch"/>
+        				</apex:form>
+      				</div>
+    	</header>
+   </div>
+<!-- / HEADER CARD-->
+<div class="slds-card__body">
+   <apex:dataTable value="{!result3}" var="cont" styleClass="slds-table slds-table_bordered slds-is-selected slds-has-flexi-truncate"> 
+       <apex:column headerValue="Contract Name" value="{!cont.name}"/>
+              <apex:column headerValue="Contract Name" value="{!cont.name}"/>
+             <apex:column headerValue="Contract Number">
+             	<apex:outputLink value="/{!cont.Id}" target="_blank">{!cont.ContractNumber}</apex:outputLink>
+             </apex:column>
+             <apex:column headerValue="Account Name" value="{!cont.account.name}"/>
+             <apex:column headerValue="Type" value="{!cont.Type__c}"/>
+             <apex:column headerValue="Price Per GB" value="{!cont.Price_Per_GB__c}"/>
+             <apex:column headerValue="Subscription Price" value="{!cont.SubscriptionPricePerMonth__c}"/>
+             <apex:column headerValue="Matter Minimum" value="{!cont.MinimumMatterCharge__c}"/>
+             <apex:column headerValue="Start Date" value="{!cont.StartDate}"/>
+             <apex:column headerValue="End Date" value="{!cont.EndDate}"/>
+       </apex:dataTable>
+   </div>
+<!-- CONTRACTS FOOTER-->
+ <footer class="slds-card__footer">
+       <div class="slds-card__body slds-card__body_inner">END Contracts</div>
+    </footer>
+ </article>      
+<!-- / CONTRACTS TABLE -->        
+<br/> 
+      
+
+<br/>      
+<!-- PAGE FOOTER -->
+      <footer role="contentinfo" class="slds-p-around_large">
+      <!-- LAYOUT GRID -->
+          <div class="slds-grid slds-grid_align-spread">
+              <p class="slds-col">Sales Operations Note:</p>
+                <p class="slds-col">
+                    <img alt="DISCO Logo" src="{!$Resource.Logo}" width="100" height="15" title="DISCO Logo"/>
+                </p>
+          </div>
+ 	  <!-- / LAYOUT GRID -->
+      </footer>
+          <p class="slds-text-heading_small slds-m-bottom_small slds-p-left_large">
+              If you have for ideas this page, or suggestions for improvement, please slack "whited" or email comments to whited@csdisco.com. Thanks!
+          </p>
+<!-- / PAGE FOOTER --> 
+</div>
+<!-- / REQUIRED SLDS WRAPPER -->
+<!-- JAVASCRIPT -->
+<!-- / JAVASCRIPT -->
+</body>
+</html>
+</apex:page>
