@@ -31,7 +31,7 @@
             	</div>
       			<div class="slds-media__body">
         			<h2 class="slds-card__header-title">
-            		<span class="slds-text-heading_small">Account Search</span> 
+            		<span class="slds-text-heading_small">Account Metrics</span> 
         			</h2>
       			</div>
     		</header>
@@ -75,11 +75,15 @@
          <div class="slds-card__body slds-card__body_inner">
             <h3>This Account is currently hosting hosting {!ActGBSize} GBs across {!NumOfActMatters} Matters.</h3> 
              <br/>
-            <h3> Current MRR: ${!CurrentMRR} </h3>
+             <h3> Current MRR: <apex:outputText value="{0, number, Currency}">
+                  <apex:param value="{!CurrentMRR}" />
+                  </apex:outputText> </h3>
              <br/>
-            <h3> Current Billable Size: ${!BillableGB} </h3>
+            <h3> Current Billable Size: {!Billablesize}GB </h3>
              <br/>
-            <h3> Life Time MRR: ${!grandTotal} </h3>
+            <h3> Life Time MRR: <apex:outputText value="{0, number, Currency}">
+                  <apex:param value="{!lifetimeMRR}" />
+                  </apex:outputText> </h3> 
          </div>
      <!--/SEARCH SUMMATION -->
 </apex:form>      
@@ -88,7 +92,13 @@
 </div>
 <!-- / PAGE HEADER -->
 <br/>
-     
+    <!--<apex:dataTable value="{!wrapper.Months}" var="stats" id="pg5" styleClass="slds-table slds-table_bordered slds-is-selected slds-has-flexi-truncate">
+             <apex:column headerValue="Month" value="{!stats.Month}"/>
+             <apex:column headerValue="MRR" value="{!stats.mrr}"/>
+             <apex:column headerValue="Billable Size in GB" value="{!stats.size}"/>
+             <apex:column headerValue="Active Matters" value="{!stats.matters}"/>
+    </apex:dataTable> -->
+      <br/>
 <!-- MATTER TABLE -->
 <!-- HEADER CARD WITH ONE ACTION AND DATA TABLE -->
 	<article class="slds-card">
